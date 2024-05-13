@@ -1,0 +1,25 @@
+﻿hostname R3
+!
+interface Loopback1234
+ ip address 1.2.3.3 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description LINK TO R2
+ ip address 11.4.11.3 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description LINK TO R6
+ ip address 4.7.4.3 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ description LINK TO R1
+ ip address 1.4.1.3 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45

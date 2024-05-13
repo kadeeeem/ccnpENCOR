@@ -1,0 +1,24 @@
+﻿hostname R9
+!
+interface Loopback0
+ ip address 5.5.5.1 255.255.255.0
+!
+interface Loopback1
+ ip address 5.5.55.1 255.255.255.0
+!
+interface Loopback1234
+ ip address 1.2.3.9 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description LINK TO R1
+ ip address 1.5.1.9 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description LINK TO R8
+ ip address 2.5.2.9 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
