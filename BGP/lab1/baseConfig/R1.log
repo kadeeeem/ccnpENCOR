@@ -23,4 +23,3 @@ interface GigabitEthernet0/2
  duplex auto
  speed auto
  media-type rj45
-!

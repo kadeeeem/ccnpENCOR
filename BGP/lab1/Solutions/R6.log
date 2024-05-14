@@ -1,0 +1,71 @@
+﻿hostname R6
+!
+interface Loopback1234
+ ip address 1.2.3.6 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet0/0
+ description LINK TO R5
+ ip address 3.7.3.6 255.255.255.0
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description LINK TO R3
+ ip address 4.7.4.6 255.255.255.0
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ description LINK TO R7
+ ip address 7.6.7.6 255.255.255.0
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ description LINK TO R8
+ ip address 2.7.2.6 255.255.255.0
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router ospf 1
+ router-id 10.0.0.6
+ passive-interface GigabitEthernet0/2
+ passive-interface GigabitEthernet0/3
+!
+router bgp 200
+ bgp log-neighbor-changes
+ no bgp default ipv4-unicast
+ neighbor 1.2.3.1 remote-as 200
+ neighbor 1.2.3.1 update-source Loopback1234
+ neighbor 1.2.3.2 remote-as 200
+ neighbor 1.2.3.2 update-source Loopback1234
+ neighbor 1.2.3.3 remote-as 200
+ neighbor 1.2.3.3 update-source Loopback1234
+ neighbor 1.2.3.4 remote-as 200
+ neighbor 1.2.3.4 update-source Loopback1234
+ neighbor 1.2.3.5 remote-as 200
+ neighbor 1.2.3.5 update-source Loopback1234
+ neighbor 2.7.2.8 remote-as 400
+ neighbor 7.6.7.7 remote-as 300
+ !
+ address-family ipv4
+  aggregate-address 166.6.0.0 255.255.0.0 as-set summary-only
+  aggregate-address 8.8.8.0 255.255.255.0 as-set summary-only
+  neighbor 1.2.3.1 activate
+  neighbor 1.2.3.2 activate
+  neighbor 1.2.3.2 next-hop-self
+  neighbor 1.2.3.3 activate
+  neighbor 1.2.3.4 activate
+  neighbor 1.2.3.5 activate
+  neighbor 2.7.2.8 activate
+  neighbor 7.6.7.7 activate
+ exit-address-family

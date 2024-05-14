@@ -1,0 +1,51 @@
+﻿hostname R3
+!
+interface Loopback1234
+ ip address 1.2.3.3 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description LINK TO R2
+ ip address 11.4.11.3 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description LINK TO R6
+ ip address 4.7.4.3 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ description LINK TO R1
+ ip address 1.4.1.3 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router ospf 1
+ router-id 10.0.0.3
+ network 0.0.0.0 255.255.255.255 area 0
+!
+router bgp 200
+ bgp log-neighbor-changes
+ neighbor 1.2.3.1 remote-as 200
+ neighbor 1.2.3.1 update-source Loopback1234
+ neighbor 1.2.3.2 remote-as 200
+ neighbor 1.2.3.2 update-source Loopback1234
+ neighbor 1.2.3.4 remote-as 200
+ neighbor 1.2.3.4 update-source Loopback1234
+ neighbor 1.2.3.5 remote-as 200
+ neighbor 1.2.3.5 update-source Loopback1234
+ neighbor 1.2.3.6 remote-as 200
+ neighbor 1.2.3.6 update-source Loopback1234
+ !
+ address-family ipv4
+  bgp suppress-inactive
+  neighbor 1.2.3.1 activate
+  neighbor 1.2.3.2 activate
+  neighbor 1.2.3.4 activate
+  neighbor 1.2.3.5 activate
+  neighbor 1.2.3.6 activate
+ exit-address-family
