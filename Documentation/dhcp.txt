@@ -1,0 +1,16 @@
+#--- DHCP Pool Configuration
+# SWITCH MUST BE CONFIGURED WITH AN INTERFACE VLAN!!!!
+
+# Configure excluded addresses
+ip dhcp excluded-address <lowest-address> <highest-address>
+
+# Configure DHCP pool addresses
+# Pool = Range of IPs that will be distributed to devices
+ip dhcp pool <name>
+network <x.x.x.x/nn>
+domain-name <name>
+dns-server <address1> <address2>
+default-router <address1>
+lease {days[hours][minutes] | infinite}
+# Add more detail to options
+option code
