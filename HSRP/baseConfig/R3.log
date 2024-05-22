@@ -1,0 +1,9 @@
+﻿hostname R3
+!
+interface GigabitEthernet0/0
+ description INSIDE INTERFACE
+ ip address 172.16.10.2 255.255.255.240
+!
+interface GigabitEthernet0/1
+ description OUTSIDE INTERFACE
+ ip address 172.16.10.210 255.255.255.248

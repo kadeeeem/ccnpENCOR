@@ -1,0 +1,7 @@
+﻿hostname R4
+!
+interface Loopback0
+ ip address 4.4.4.4 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 172.16.10.212 255.255.255.248

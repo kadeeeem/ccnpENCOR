@@ -1,0 +1,31 @@
+﻿hostname R1
+!
+key chain DURANET
+ key 1
+  key-string 7 104A1C0B0419171F
+!
+track 1 interface GigabitEthernet0/1 line-protocol
+!
+interface GigabitEthernet0/0
+ description INSIDE INTERFACE
+ ip address 172.16.10.1 255.255.255.240
+ standby version 2
+ standby 1 ip 172.16.10.4
+ standby 1 timers msec 300 1
+ standby 1 priority 255
+ standby 1 preempt
+ standby 1 authentication md5 key-chain DURANET
+ standby 1 mac-address aaaa.bbbb.cccc
+ standby 1 track 1 decrement 50
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description OUTSIDE INTERFACE
+ ip address 172.16.10.209 255.255.255.248
+ duplex auto
+ speed auto
+ media-type rj45
+!
+ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/1 172.16.10.212

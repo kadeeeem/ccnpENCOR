@@ -1,0 +1,51 @@
+#--- HSRP CCNP Notes
+
+HSRP is Cisco proprietary.
+
+# Election Process
+The device with the highest priority is elected as the Active router.
+Default priority = 100
+If there is a tie in priority, the device with the highest IP address wins the tie-breaker.
+
+# Preemption
+Preemption is a term used to define the process where a router assumes the role of "Active" over a device that was previously considered the Active router.
+This can happen through a change in priority on either the local or remote device.
+Changes in priority can be made manually via the CLI, or by enabling tracking.
+Example: Tracking is enabled on R1's interface G0/0 which provides local hosts with a path to the internet. You've configured G0/0 to decrement the HSRP priority by 10 points if this interface goes down. The HSRP neighbor with the highest priority after the decrement has taken place, will assume the role of "Active"
+
+# Interface Tracking Configuration
+
+# HSRP States
+1. Initial
+2. Learn
+3. Listen - Is the state for all routers that participate in the HSRP group when the Active and Standby roles have been delegated.
+4. Speak - The state for routers participating in the Active/Standby election
+5. Standby - The backup router ready to assume the role of Active when the Active router fails.
+6. Active - The router responsible for forward packets that are sent to the HSRP group.
+
+# Miscellaneous HSRP Stuff
+Sends UDP-based hello messages via multicast
+#--- HSRPv1
+Group range: 0-255
+Multicast address: 224.0.0.2
+MAC address: 0000.0c07.ACxy
+
+#--- HSRPv2
+Group range: 0-4095
+Multicast address: 224.0.0.102
+MAC address: 0000.0c9f.fxyz
+
+#--- HSRP Configuration
+# Navigate to client-facing interface
+standby version <#>
+standby <group.#> ip <x.x.x.x>
+standby <group.#> mac-address <xxxx.yyyy.zzzz>
+standby <group.#> timers [msec] <seconds> 
+
+#--- HSRP Group Authentication
+# Key-chain authentication
+standby <group.#> authentication md5 key-chain <name>
+exit
+key chain <name>
+    key <id>
+        key-string <key>
