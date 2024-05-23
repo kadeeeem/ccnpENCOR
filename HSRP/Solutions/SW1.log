@@ -9,4 +9,3 @@ ip dhcp pool LAN
 interface Vlan1
  ip address 172.16.10.5 255.255.255.0
 !
-ip route 0.0.0.0 0.0.0.0 172.16.10.4
