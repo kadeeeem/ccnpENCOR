@@ -1,0 +1,78 @@
+R1:
+
+router ospf 1
+ router-id 0.0.0.1
+ area 12 range 172.16.0.0 255.255.248.0
+ network 10.12.1.0 0.0.0.3 area 0
+ network 172.16.1.0 0.0.0.255 area 12
+ network 172.16.2.0 0.0.0.255 area 12
+ network 172.16.3.0 0.0.0.255 area 12
+
+ interface GigabitEthernet0/3
+ ip address 10.12.1.1 255.255.255.252
+ ip ospf network point-to-point
+
+*************
+
+R2:
+
+interface GigabitEthernet0/0
+ ip address 10.12.1.2 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+
+interface GigabitEthernet0/1
+ ip address 10.23.1.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+
+router ospf 1
+ router-id 0.0.0.2
+ passive-interface GigabitEthernet0/2
+ passive-interface GigabitEthernet0/3
+!
+
+
+*************************
+
+R3:
+
+interface GigabitEthernet0/0
+ ip address 10.23.1.2 255.255.255.252
+ ip ospf network point-to-point
+
+interface GigabitEthernet0/1
+ ip address 10.34.1.1 255.255.255.252
+ ip ospf network point-to-point
+
+router ospf 1
+ router-id 0.0.0.3
+ passive-interface GigabitEthernet0/2
+ passive-interface GigabitEthernet0/3
+ network 10.23.1.0 0.0.0.3 area 0
+ network 10.34.1.0 0.0.0.3 area 34
+!
+
+
+***************************
+
+R4:
+
+interface Loopback0
+ ip address 192.168.40.1 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf 1 area 34
+!
+interface GigabitEthernet0/0
+ ip address 10.34.1.2 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 34
+
+router ospf 1
+ router-id 0.0.0.4
+ passive-interface GigabitEthernet0/1
+ passive-interface GigabitEthernet0/2
+ passive-interface GigabitEthernet0/3
