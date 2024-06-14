@@ -1,0 +1,173 @@
+*************************
+Enable Rapid-PVST:
+spanning-tree mode rapid-pvst
+---
+
+************************
+Configure SW1 as the root for all VLANs:
+spanning-tree vlan 30-40 priority 24576
+---
+
+************************
+Configure SW2 as the secondary for VLANs 30-35 | SW3 for 36-40:
+
+SW2:
+spanning-tree vlan 30-35 priority 28672
+
+SW3:
+spanning-tree vlan 36-40 priority 28672
+---
+
+************************
+Testing Convergence:
+Before(SW2):
+
+VLAN0030
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    24606
+             Address     5254.0007.eefd
+             Cost        4
+             Port        4 (GigabitEthernet0/3)
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    28702  (priority 28672 sys-id-ext 30)
+             Address     5254.0006.eab0
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/0               Altn BLK 4         128.1    P2p 
+Gi0/1               Desg FWD 4         128.2    P2p 
+Gi0/2               Desg FWD 4         112.3    P2p 
+Gi0/3               Root FWD 4         128.4    P2p 
+
+After(SW2):
+
+VLAN0030
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    28702
+             Address     5254.0006.eab0
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    28702  (priority 28672 sys-id-ext 30)
+             Address     5254.0006.eab0
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/0               Desg FWD 4         128.1    P2p 
+Gi0/1               Desg FWD 4         128.2    P2p 
+Gi0/2               Desg FWD 4         112.3    P2p 
+Gi0/3               Desg FWD 4         128.4    P2p 
+
+---
+
+Before(SW3):
+
+VLAN0036
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    24612
+             Address     5254.0007.eefd
+             Cost        4
+             Port        4 (GigabitEthernet0/3)
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    28708  (priority 28672 sys-id-ext 36)
+             Address     5254.0017.ffc2
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/0               Altn BLK 4         128.1    P2p 
+Gi0/1               Desg FWD 4         128.2    P2p 
+Gi0/2               Desg FWD 4         128.3    P2p 
+Gi0/3               Root FWD 4         128.4    P2p 
+
+After(SW3):
+
+VLAN0036
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    28708
+             Address     5254.0017.ffc2
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    28708  (priority 28672 sys-id-ext 36)
+             Address     5254.0017.ffc2
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/0               Desg FWD 4         128.1    P2p 
+Gi0/1               Desg FWD 4         128.2    P2p 
+Gi0/2               Desg FWD 4         128.3    P2p 
+Gi0/3               Desg FWD 4         128.4    P2p 
+---
+
+************************
+Path manipulation:
+
+{SW1}
+interface GigabitEthernet0/2
+ spanning-tree vlan 36-40 port-priority 112
+!
+interface GigabitEthernet0/3
+ spanning-tree vlan 30-35 port-priority 112
+
+{SW2}
+interface GigabitEthernet0/0
+ spanning-tree vlan 36-40 cost 10
+!
+interface GigabitEthernet0/2
+ spanning-tree vlan 30-35 port-priority 112
+!
+interface GigabitEthernet0/3
+ spanning-tree vlan 36-40 cost 10
+
+{SW3}
+interface GigabitEthernet0/0
+ spanning-tree vlan 30-35 cost 10
+!
+interface GigabitEthernet0/3
+ spanning-tree vlan 30-35 cost 10
+!
+---
+
+************************
+Configure SW1 such that, if a port receives a superior BPDU, it will disable the port.
+  -What is the resulting port status and port type?
+
+interface GigabitEthernet0/0
+ spanning-tree guard root
+!
+interface GigabitEthernet0/1
+ spanning-tree guard root
+!
+interface GigabitEthernet0/2
+ spanning-tree guard root
+!
+interface GigabitEthernet0/3
+ spanning-tree guard root
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/0               Desg BKN*4         128.1    P2p *ROOT_Inc 
+Gi0/1               Desg BKN*4         128.2    P2p *ROOT_Inc 
+Gi0/2               Desg BKN*4         128.3    P2p *ROOT_Inc 
+Gi0/3               Desg BKN*4         112.4    P2p *ROOT_Inc 
+---
+************************
+Halt the transmission of BDPUs on ports connected to end devices.
+  -Configure those ports with portfast globally
+  -From global config mode, configure those ports to shutdown if a BPDU is received
+  -Configure those ports to auto-recover after being disabled on receipt of a BPDU
+
+spanning-tree portfast edge default
+spanning-tree portfast edge bpduguard default
+spanning-tree portfast edge bpdufilter default
+errdisable recovery cause bpduguard
